@@ -1,13 +1,16 @@
 <?php
+// views/layout/menu.php
+
+// Aseguramos que security.php esté incluido para el control de sesión en el servidor
+require_once __DIR__ . '/../../app/core/security.php';
+
 // Comprobamos que el usuario esté autenticado
 // Si no hay rol en sesión, no mostramos el menú
 if (!isset($_SESSION['role'])) {
     return;
 }
 
-// Obtenemos la ruta base (suponiendo que estamos en el directorio raíz de la aplicación)
-// En un entorno real, podrías usar una constante URL_BASE definida en app/core/config.php
-// Para mantener la simplicidad y basándonos en la estructura dada:
+// Obtenemos la ruta base
 $baseUrl = "/securedesk-dam/public/";
 ?>
 
@@ -56,3 +59,35 @@ $baseUrl = "/securedesk-dam/public/";
         <a href="<?= $baseUrl ?>auth/logout.php">🚪 Cerrar sesión</a>
     </span>
 </nav>
+
+<script>
+/**
+ * Script para el cierre de sesión automático por inactividad (Cliente)
+ * Redirige al usuario al login si no se detecta actividad en 1 minuto.
+ */
+(function() {
+    let timeout;
+    const inactivityTime = 30 * 60 * 1000; // 30 minutos en milisegundos
+
+    function resetTimer() {
+        clearTimeout(timeout);
+        timeout = setTimeout(logout, inactivityTime);
+    }
+
+    function logout() {
+        alert("Tu sesión ha expirado por inactividad.");
+        window.location.href = "<?= $baseUrl ?>auth/login.php?error=expired";
+    }
+
+    // Eventos que reinician el contador de actividad
+    window.onload = resetTimer;
+    window.onmousemove = resetTimer;
+    window.onmousedown = resetTimer; // Clicks
+    window.ontouchstart = resetTimer; // Pantallas táctiles
+    window.onclick = resetTimer;     
+    window.onkeypress = resetTimer;   
+    window.addEventListener('scroll', resetTimer, true); 
+
+    resetTimer();
+})();
+</script>

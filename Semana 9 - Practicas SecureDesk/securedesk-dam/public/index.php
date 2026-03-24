@@ -1,7 +1,7 @@
 <?php
 
-// Iniciamos la sesión para poder acceder a las variables de sesión
-session_start();
+// Incluimos el control de sesión (esto ya hace session_start())
+require_once __DIR__ . '/../app/core/security.php';
 
 // Comprobamos si el usuario está autenticado
 // Si no existe user_id en sesión, redirigimos al login

@@ -4,6 +4,9 @@
  * Controlador que procesa los filtros y obtiene los datos de la tabla audit_logs.
  */
 
+// Incluimos el control de sesión (esto ya hace session_start())
+require_once __DIR__ . '/../../app/core/security.php';
+
 // Iniciar sesión y verificar permisos
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../auth/login.php');

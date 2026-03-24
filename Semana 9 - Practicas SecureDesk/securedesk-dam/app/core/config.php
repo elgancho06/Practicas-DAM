@@ -1,6 +1,11 @@
 <?php
 // config.php
 
+// Aseguramos el control de sesión por inactividad si no estamos en CLI
+if (php_sapi_name() !== 'cli') {
+    require_once __DIR__ . '/security.php';
+}
+
 try {
     $db = new PDO('sqlite:' . __DIR__ . '/../../db/securedesk.sqlite');
     // Configuramos para que devuelva errores como excepciones

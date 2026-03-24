@@ -6,20 +6,26 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Control de expiración de sesión por inactividad (30 minutos)
+// Configuración de expiración de sesión
+$timeout_duration = 30 * 60; 
+
+// Control de expiración de sesión por inactividad
 if (isset($_SESSION['user_id'])) {
-    $timeout = 30 * 60; // 30 minutos en segundos
-    if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $timeout)) {
+    if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $timeout_duration)) {
         // Sesión expirada
         session_unset();
         session_destroy();
         
-        // Redirigir al login con mensaje (usando sesión temporal o parámetro GET)
-        // Como acabamos de destruir la sesión, usaremos un parámetro GET o iniciaremos una nueva brevemente
-        header("Location: /securedesk-dam/public/auth/login.php?error=expired");
-        exit;
+        // Redirigir al login con mensaje
+        // Intentamos detectar la ruta base dinámicamente o usamos una relativa segura
+        $current_page = $_SERVER['PHP_SELF'];
+        if (strpos($current_page, '/auth/login.php') === false) {
+            header("Location: /securedesk-dam/public/auth/login.php?error=expired");
+            exit;
+        }
     }
-    $_SESSION['last_activity'] = time(); // Actualizar el tiempo de última actividad
+    // Actualizar el tiempo de última actividad solo si no hemos expirado ya
+    $_SESSION['last_activity'] = time(); 
 }
 
 /**
